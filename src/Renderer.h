@@ -24,11 +24,13 @@ public:
 	~Renderer();
 
 public:
-	SDL_Window* window = nullptr;
 	uint32_t windowWidth = 0;
 	uint32_t windowHeight = 0;
-private:
 
+private:
+	SDL_Window* window = nullptr;
+	SDL_Renderer* renderContext = nullptr;
+	SDL_Texture* texture = nullptr;
 
 };
 

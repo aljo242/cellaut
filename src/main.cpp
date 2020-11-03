@@ -8,6 +8,7 @@ void run(SDL_Init_Info initInfo)
 
     // init window and game
 
+
     bool quit = false;
     SDL_Event event;
 
@@ -20,6 +21,8 @@ void run(SDL_Init_Info initInfo)
             quit = true;
             break;
         }
+
+        // iterate game
     }
 }
 
@@ -32,6 +35,7 @@ int main()
     initInfo.windowWidth = 1280;
     initInfo.windowHeight = 720;
     initInfo.title = "TEST WINDOW";
+    initInfo.flags = SDL_WINDOW_VULKAN;
 
     run(initInfo);
 

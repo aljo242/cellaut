@@ -1,5 +1,5 @@
 #include "Renderer.h"
-
+#include <cassert>
 
 Renderer::Renderer(const SDL_Init_Info& windowInfo)
 	:
@@ -16,9 +16,18 @@ Renderer::Renderer(const SDL_Init_Info& windowInfo)
 		windowInfo.windowHeight,
 		windowInfo.flags
 	);
+	assert(window != nullptr);
+
+
+	renderContext = SDL_CreateRenderer(window, -1, 0);
+	assert(renderContext != nullptr);
+
 }
 
 Renderer::~Renderer()
 {
+	// Close and destroy the window
+	SDL_DestroyWindow(window);
+
 	SDL_Quit();
 }
