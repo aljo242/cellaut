@@ -86,6 +86,7 @@ list(APPEND EXTRA_LIBS
 	OpenMP::OpenMP_CXX
 	CONAN_PKG::spdlog
 	CONAN_PKG::stb
+	CONAN_PKG::sdl2
 	)
 
 include(cmake/ConanConfig.cmake)

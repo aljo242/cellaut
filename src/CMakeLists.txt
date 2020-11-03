@@ -1,5 +1,5 @@
 add_executable(main
-	main.cpp)
+	main.cpp "Renderer.h" "Renderer.cpp")
 
 target_link_libraries(main PUBLIC
 		${EXTRA_LIBS}

@@ -15,6 +15,7 @@ macro(run_conan)
 		${CONAN_EXTRA_REQUIRES}
 		spdlog/1.7.0
 		stb/20200203
+		sdl2/2.0.12@bincrafters/stable
 		OPTIONS
 		${CONAN_EXTRA_OPTIONS}
 		BASIC_SETUP
