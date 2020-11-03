@@ -1,5 +1,6 @@
-#include <spdlog/spdlog.h>
+#include "Log.h"
 #include "Renderer.h"
+#include "ConwayGame.h"
 
 void run(SDL_Init_Info initInfo)
 {
@@ -7,7 +8,7 @@ void run(SDL_Init_Info initInfo)
     Renderer renderer(initInfo);
 
     // init window and game
-
+    ConwayGame game(renderer.windowWidth, renderer.windowHeight);
 
     bool quit = false;
     SDL_Event event;
@@ -15,21 +16,20 @@ void run(SDL_Init_Info initInfo)
     while (!quit)
     {
         SDL_WaitEvent(&event);
-        switch (event.type)
-        {
-        case SDL_QUIT:
-            quit = true;
-            break;
-        }
+        quit = game.CheckInputs(event);
 
         // iterate game
+        renderer.Update(game.world.cells);
+        renderer.Render();
     }
 }
 
 
 int main()
 {
-    spdlog::critical("Hello World!");
+#if defined(_DEBUG)
+    spdlog::set_level(spdlog::level::debug);
+#endif
 
     SDL_Init_Info initInfo{};
     initInfo.windowWidth = 1280;
