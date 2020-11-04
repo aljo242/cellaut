@@ -4,7 +4,9 @@
 #define SDL_MAIN_HANDLED
 #include <SDL.h>
 #include <string>
-#include <vector>
+#include <vector>]
+#include "ConwayGame.h"
+
 
 struct SDL_Init_Info
 {
@@ -16,15 +18,13 @@ struct SDL_Init_Info
 	uint32_t flags = 0;
 };
 
-
-
 class Renderer
 {
 public:
 	Renderer(const SDL_Init_Info& windowInfo);
 	~Renderer();
 
-	void Update(const std::vector<uint32_t>& pixels);
+	void Update(const std::vector<Color>& pixels);
 	void Render();
 
 public:

@@ -1,5 +1,5 @@
 add_executable(main
-	main.cpp "Renderer.h" "Renderer.cpp"  "ConwayGame.h" "ConwayGame.cpp" "Log.h")
+	main.cpp "Renderer.h" "Renderer.cpp"  "ConwayGame.h" "ConwayGame.cpp" "Log.h" "Timer.h" "Timer.cpp")
 
 target_link_libraries(main PUBLIC
 		${EXTRA_LIBS}

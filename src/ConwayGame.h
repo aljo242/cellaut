@@ -2,7 +2,27 @@
 #define CONWAY_GAME_H
 
 #include <vector>
+#include <array>
 #include <SDL.h>
+
+
+struct Color
+{
+	uint8_t b = 0;
+	uint8_t g = 0;
+	uint8_t r = 0;
+	uint8_t a = 0;
+
+	Color(const uint8_t _b,
+		const uint8_t _g,
+		const uint8_t _r,
+		const uint8_t _a)
+		:
+		b(_b), g(_g), r(_r), a(_a)
+	{}
+
+	Color() = default;
+};
 
 enum class CellState
 {
@@ -13,7 +33,7 @@ enum class CellState
 
 struct Cell
 {
-	CellState state;
+	std::array<CellState, 2> states; // alternating buffer
 	void UpdateState(const size_t index);
 };
 
@@ -22,7 +42,7 @@ struct WorldDescription
 {
 	uint32_t Width;
 	uint32_t Height;
-	std::vector<uint32_t> pixels;
+	std::vector<Color> pixels;
 	std::vector<Cell> cells;
 
 	explicit WorldDescription(const uint32_t width, const uint32_t height);
@@ -40,6 +60,7 @@ public:
 	void initGame();
 
 private:
+	void setPixel(const size_t index, const Color& color);
 
 public:
 	WorldDescription world;

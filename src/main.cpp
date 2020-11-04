@@ -19,7 +19,6 @@ void run(SDL_Init_Info initInfo)
     {
         SDL_WaitEvent(&event);
         quit = game.CheckInputs(event);
-        
 
         // iterate game
         renderer.Update(game.world.pixels);

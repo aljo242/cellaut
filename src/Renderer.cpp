@@ -31,8 +31,6 @@ Renderer::Renderer(const SDL_Init_Info& windowInfo)
 		windowInfo.windowHeight
 	);
 	assert(texture != nullptr);
-
-
 }
 
 Renderer::~Renderer()
@@ -48,9 +46,9 @@ Renderer::~Renderer()
 	SDL_Quit();
 }
 
-void Renderer::Update(const std::vector<uint32_t>& pixels)
+void Renderer::Update(const std::vector<Color>& pixels)
 {
-	SDL_UpdateTexture(texture, nullptr, pixels.data(), static_cast<int>(windowWidth * sizeof(uint32_t)));
+	SDL_UpdateTexture(texture, nullptr, pixels.data(), static_cast<int>(windowWidth * sizeof(Color)));
 }
 
 void Renderer::Render()
