@@ -34,7 +34,7 @@ enum class CellState
 struct Cell
 {
 	std::array<CellState, 2> states; // alternating buffer
-	void UpdateState(const size_t index);
+	void UpdateState(const size_t index, const uint32_t width, const uint32_t height);
 };
 
 
@@ -49,8 +49,6 @@ struct WorldDescription
 };
 
 
-
-
 class ConwayGame
 {
 public:
@@ -58,6 +56,7 @@ public:
 	bool CheckInputs(const SDL_Event& event);
 
 	void initGame();
+	void Update();
 
 private:
 	void setPixel(const size_t index, const Color& color);

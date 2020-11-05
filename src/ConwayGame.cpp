@@ -7,10 +7,26 @@
 
 using namespace std::chrono;
 
-void Cell::UpdateState(const size_t index)
+void Cell::UpdateState(const size_t index, const uint32_t width, const uint32_t height)
 {
+	const auto width_t = static_cast<int>(width);
+	const auto height_t = static_cast<int>(height);
+
 	// count states of neighbors
-	
+	int n0 = (index - 1) % width_t;						// neighbor to the left
+	if (n0 < 0) {n0 += width_t;}
+	int n1 = (index + 1) % width_t;						// neighbor to the right
+	int n2 = index - width_t;			// neighbor above
+	if (n2 < 0) {n2 += width;}
+	int n3 = (index + width_t) % (width_t * height_t);			// neighbor below
+	int n4 = (n2 - 1) % width_t;
+	if (n4 < 0) { n4 += width_t; }
+	int n5 = (n2 + 1) % width_t; 
+	int n6 = n3 - 1; 
+	if (n6 < 0) { n6 += width_t; }
+	int n7 = (n3 + 1) % width_t; 
+
+
 }
 
 
@@ -72,8 +88,6 @@ void ConwayGame::initGame()
 	spdlog::debug("Initializing grid...");
 	Timer timer;
 
-
-
 	#pragma omp parallel
 	{
 		// each thread gets its own random device
@@ -96,6 +110,15 @@ void ConwayGame::initGame()
 	const auto elapsedTimer_ms = timer.Stop();
 	spdlog::debug("Grid initialized.");
 	spdlog::debug("Elapsed time: {}s", static_cast<double>(elapsedTimer_ms) / 1000.0);
+}
+
+void ConwayGame::Update()
+{
+	for (int i = 0; i < world.cells.size(); ++i)
+	{
+		const auto index = static_cast<size_t>(i);
+		world.cells[index].UpdateState(index, world.Width, world.Height);
+	}
 }
 
 // index matches with cell index in game
