@@ -12,6 +12,9 @@ void Cell::UpdateState(const size_t index, const uint32_t width, const uint32_t 
 	const auto width_t = static_cast<int>(width);
 	const auto height_t = static_cast<int>(height);
 
+	const int xCoord = static_cast<int>(index) % width_t;
+	const int yCoord = static_cast<int>(index) / width_t;
+
 	// count states of neighbors
 	int n0 = (index - 1) % width_t;						// neighbor to the left
 	if (n0 < 0) {n0 += width_t;}
