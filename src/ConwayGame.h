@@ -34,7 +34,7 @@ enum class CellState
 struct Cell
 {
 	std::array<CellState, 2> states; // alternating buffer
-	void UpdateState(const size_t index, const uint32_t width, const uint32_t height);
+	void UpdateState(const size_t index, const uint32_t width, const uint32_t height, const uint32_t iter);
 };
 
 
@@ -66,6 +66,7 @@ public:
 
 private:
 	bool leftMouseButtonDown = false;
+	uint64_t iters = 0;
 };
 
 #endif // CONWAY_GAME_H

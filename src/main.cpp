@@ -2,6 +2,8 @@
 #include "Renderer.h"
 #include "ConwayGame.h"
 #include <ctime>
+#include <thread>
+#include <chrono>
 
 void run(SDL_Init_Info initInfo)
 {
@@ -19,11 +21,13 @@ void run(SDL_Init_Info initInfo)
     {
         SDL_WaitEvent(&event);
         quit = game.CheckInputs(event);
-        game.Update();
 
         // iterate game
         renderer.Update(game.world.pixels);
         renderer.Render();
+
+		game.Update();
+		//std::this_thread::sleep_for(std::chrono::milliseconds(200));
     }
 }
 
@@ -35,8 +39,8 @@ int main()
 #endif
 
     SDL_Init_Info initInfo{};
-    initInfo.windowWidth = 1280;
-    initInfo.windowHeight = 720;
+    initInfo.windowWidth = 320;
+    initInfo.windowHeight = 320;
     initInfo.title = "TEST WINDOW";
     initInfo.flags = SDL_WINDOW_VULKAN;
 

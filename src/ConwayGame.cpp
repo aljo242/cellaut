@@ -4,31 +4,36 @@
 #include <random>
 #include <omp.h>
 #include "Timer.h"
+#include "VMesh.h"
 
 using namespace std::chrono;
 
-void Cell::UpdateState(const size_t index, const uint32_t width, const uint32_t height)
+void Cell::UpdateState(const size_t index, const uint32_t width, const uint32_t height, const uint32_t iter)
 {
-	const auto width_t = static_cast<int>(width);
-	const auto height_t = static_cast<int>(height);
+	const auto width_t = static_cast<int32_t>(width);
+	const auto height_t = static_cast<int32_t>(height);
 
-	const int xCoord = static_cast<int>(index) % width_t;
-	const int yCoord = static_cast<int>(index) / width_t;
+	CartCoord coord(index, width_t, height_t);
 
-	// count states of neighbors
-	int n0 = (index - 1) % width_t;						// neighbor to the left
-	if (n0 < 0) {n0 += width_t;}
-	int n1 = (index + 1) % width_t;						// neighbor to the right
-	int n2 = index - width_t;			// neighbor above
-	if (n2 < 0) {n2 += width;}
-	int n3 = (index + width_t) % (width_t * height_t);			// neighbor below
-	int n4 = (n2 - 1) % width_t;
-	if (n4 < 0) { n4 += width_t; }
-	int n5 = (n2 + 1) % width_t; 
-	int n6 = n3 - 1; 
-	if (n6 < 0) { n6 += width_t; }
-	int n7 = (n3 + 1) % width_t; 
+	const auto n0 = coord.Up(1, width_t, height_t);
+	const auto n1 = coord.Down(1, width_t, height_t);
+	const auto n2 = coord.Left(1, width_t, height_t);
+	const auto n3 = coord.Right(1, width_t, height_t);
+	const auto n4 = n0.Left(1, width_t, height_t);
+	const auto n5 = n0.Right(1, width_t, height_t);
+	const auto n6 = n1.Left(1, width_t, height_t);
+	const auto n7 = n1.Right(1, width_t, height_t);
 
+	const auto n0_v = fromVirtual(n0, width_t, height_t);
+	const auto n1_v = fromVirtual(n1, width_t, height_t);
+	const auto n2_v = fromVirtual(n2, width_t, height_t);
+	const auto n3_v = fromVirtual(n3, width_t, height_t);
+	const auto n4_v = fromVirtual(n4, width_t, height_t);
+	const auto n5_v = fromVirtual(n5, width_t, height_t);
+	const auto n6_v = fromVirtual(n6, width_t, height_t);
+	const auto n7_v = fromVirtual(n7, width_t, height_t);
+
+	
 
 }
 
@@ -117,11 +122,79 @@ void ConwayGame::initGame()
 
 void ConwayGame::Update()
 {
-	for (int i = 0; i < world.cells.size(); ++i)
+
+//#pragma omp parallel
 	{
-		const auto index = static_cast<size_t>(i);
-		world.cells[index].UpdateState(index, world.Width, world.Height);
+	const size_t currentStateIndex = iters % 2;
+	const size_t nextStateIndex = (iters + 1) % 2;
+
+		//#pragma omp for schedule(static)
+		for (int i = 0; i < world.cells.size(); ++i)
+		{	
+			const auto index = static_cast<size_t>(i);
+			const auto width_t = static_cast<int32_t>(world.Width);
+			const auto height_t = static_cast<int32_t>(world.Height);
+			//spdlog::debug("{}", index);
+
+			CartCoord coord(index, width_t, height_t);
+
+			const auto n0 = coord.Up(1, width_t, height_t);
+			const auto n1 = coord.Down(1, width_t, height_t);
+			const auto n2 = coord.Left(1, width_t, height_t);
+			const auto n3 = coord.Right(1, width_t, height_t);
+			const auto n4 = n2.Up(1, width_t, height_t);
+			const auto n5 = n2.Down(1, width_t, height_t);
+			const auto n6 = n3.Up(1, width_t, height_t);
+			const auto n7 = n3.Down(1, width_t, height_t);
+
+			uint8_t aliveCount = 0;
+
+			const auto n0_v = static_cast<size_t>(fromVirtual(n0, width_t, height_t));
+			if (world.cells[n0_v].states[currentStateIndex] == CellState::alive) {++aliveCount;}
+			const auto n1_v = static_cast<size_t>(fromVirtual(n1, width_t, height_t));
+			if (world.cells[n1_v].states[currentStateIndex] == CellState::alive) { ++aliveCount; }
+			const auto n2_v = static_cast<size_t>(fromVirtual(n2, width_t, height_t));
+			if (world.cells[n2_v].states[currentStateIndex] == CellState::alive) { ++aliveCount; }
+			const auto n3_v = static_cast<size_t>(fromVirtual(n3, width_t, height_t));
+			if(world.cells[n3_v].states[currentStateIndex] == CellState::alive) { ++aliveCount; }
+			const auto n4_v = static_cast<size_t>(fromVirtual(n4, width_t, height_t));
+			if (world.cells[n4_v].states[currentStateIndex] == CellState::alive) { ++aliveCount; }
+			const auto n5_v = static_cast<size_t>(fromVirtual(n5, width_t, height_t));
+			if (world.cells[n5_v].states[currentStateIndex] == CellState::alive) { ++aliveCount; }
+			const auto n6_v = static_cast<size_t>(fromVirtual(n6, width_t, height_t));
+			if (world.cells[n6_v].states[currentStateIndex] == CellState::alive) { ++aliveCount; }
+			const auto n7_v = static_cast<size_t>(fromVirtual(n7, width_t, height_t));
+			if (world.cells[n7_v].states[currentStateIndex] == CellState::alive) { ++aliveCount; }
+
+			if (aliveCount < 1 && aliveCount > 4)
+			{
+				// if 3 alive neighbors and i am dead, become alive
+				if (aliveCount == 3 && world.cells[index].states[currentStateIndex] == CellState::dead)
+				{
+					world.cells[index].states[nextStateIndex] = CellState::alive;
+ 				}
+				// if 2 alive, my state remains the same
+			}
+			// for all other cases, if I am alive, make me dead, else remain dead
+			else if (world.cells[index].states[currentStateIndex] == CellState::alive)
+			{
+				world.cells[index].states[nextStateIndex] = CellState::dead;
+			}	
+
+
+			if (world.cells[index].states[nextStateIndex] == CellState::alive)
+			{
+				setPixel(index, Color(0, 0, 255, 0));
+			}
+			else
+			{
+				setPixel(index, Color(255, 255, 255, 255));
+			}
+		}
 	}
+
+	++iters;
+	spdlog::debug("Iteration: {}", iters);
 }
 
 // index matches with cell index in game
