@@ -2,39 +2,23 @@
 #define VIRTUAL_MESH_H
 #include <cstdint>
 
-// only possible to use positive coordinate values for this application
 struct CartCoord
 {
-	uint32_t x{ 0 };
-	uint32_t y{ 0 };
+	int32_t x{ 0 };
+	int32_t y{ 0 };
+
+	CartCoord(const int32_t addr, const int32_t rowSize, const int32_t colSize);
+	CartCoord(const int32_t _x, const int32_t _y);
+
+
+	CartCoord Up(const int32_t n, const int32_t rowSize, const int32_t colSize) const;
+	CartCoord Down(const int32_t n, const int32_t rowSize, const int32_t colSize) const;
+	CartCoord Left(const int32_t n, const int32_t rowSize, const int32_t colSize) const;
+	CartCoord Right(const int32_t n, const int32_t rowSize, const int32_t colSize) const;
 };
 
-using VMeshDims = CartCoord;
 
-class VMesh;
-
-CartCoord toVirtual(const uint32_t addr, const VMesh& mesh);
-uint32_t fromVirtual(const CartCoord coord, const VMesh& mesh);
-
-class VMesh
-{
-public:
-	// constructor for perfect square mesh
-	VMesh(const uint32_t numPEs, const uint32_t ID, const uint32_t dataSize);
-	VMesh(const uint32_t numPEs, const uint32_t ID, const uint32_t dataSize, const uint32_t rowSize, const uint32_t colSize);
-
-
-	CartCoord Up(const uint32_t n) const;
-	CartCoord Down(const uint32_t n) const;
-	CartCoord Left(const uint32_t n) const;
-	CartCoord Right(const uint32_t n) const;
-
-public:
-	uint32_t ownerID{ 0 };
-	VMeshDims meshDims;
-	VMeshDims dataDims;
-	VMeshDims localDims;
-	CartCoord virtualAddress;
-};
+CartCoord toVirtual(const int32_t addr, const int32_t rowSize, const int32_t colSize);
+int32_t fromVirtual(const CartCoord coord, const int32_t rowSize, const int32_t colSize);
 
 #endif // VIRTUAL_MESH_H
